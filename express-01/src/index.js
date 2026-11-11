@@ -1,4 +1,3 @@
-
 import "dotenv/config";
 import express from "express";
 import helmet from "helmet";
@@ -53,17 +52,19 @@ const startServer = () => {
   });
 };
 
-if (syncDatabase) {
-  sequelize
-    .sync({ force: eraseDatabaseOnSync })
-    .then(() => {
-      startServer();
-    })
-    .catch((error) => {
-      console.error("Erro ao sincronizar o banco:", error);
-    });
-} else {
-  startServer();
+if (!process.env.VERCEL) {
+  if (syncDatabase) {
+    sequelize
+      .sync({ force: eraseDatabaseOnSync })
+      .then(() => {
+        startServer();
+      })
+      .catch((error) => {
+        console.error("Erro ao sincronizar o banco:", error);
+      });
+  } else {
+    startServer();
+  }
 }
 
 export default app;
